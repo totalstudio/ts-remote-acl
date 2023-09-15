@@ -37,7 +37,7 @@ class AclBehavior extends Behavior
     /**
      * Table instance
      */
-    protected $_table = null;
+    protected Table $_table;
 
     /**
      * Maps ACL type options to ACL models

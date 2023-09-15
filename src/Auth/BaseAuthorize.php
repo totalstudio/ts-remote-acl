@@ -16,15 +16,25 @@ declare(strict_types=1);
 
 namespace Acl\Auth;
 
-use Cake\Auth\BaseAuthorize as ParentAuthorize;
+use Cake\Controller\ComponentRegistry;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 
 /**
  * Base authorization adapter for other adapter of this plugin.
  */
-abstract class BaseAuthorize extends ParentAuthorize
+abstract class BaseAuthorize
 {
+    use InstanceConfigTrait;
+
+    /**
+     * ComponentRegistry instance for getting more components.
+     *
+     * @var \Cake\Controller\ComponentRegistry
+     */
+    protected $_registry;
+
     /**
      * Default config for authorize objects.
      *
@@ -50,6 +60,18 @@ abstract class BaseAuthorize extends ParentAuthorize
         ],
         'userModel' => 'Users',
     ];
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\Controller\ComponentRegistry $registry The controller for this request.
+     * @param array<string, mixed> $config An array of config. This class does not use any config.
+     */
+    public function __construct(ComponentRegistry $registry, array $config = [])
+    {
+        $this->_registry = $registry;
+        $this->setConfig($config);
+    }
 
     /**
      * Get the action path for a given request. Primarily used by authorize objects
@@ -121,4 +143,13 @@ abstract class BaseAuthorize extends ParentAuthorize
             }
         }
     }
+
+    /**
+     * Checks user authorization.
+     *
+     * @param \ArrayAccess|array $user Active user data
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return bool
+     */
+    abstract public function authorize($user, ServerRequest $request): bool;
 }
