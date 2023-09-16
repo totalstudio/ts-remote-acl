@@ -21,7 +21,7 @@
         "source": "https://github.com/cakephp/acl"
     },
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.1",
         "cakephp/cakephp": "^5.0",
         "cakephp/plugin-installer": "^1.2"
     },
