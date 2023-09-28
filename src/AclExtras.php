@@ -22,7 +22,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Acl\Utils\Folder;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -119,7 +119,7 @@ class AclExtras
         if (!$controller) {
             $controller = new Controller(new ServerRequest());
         }
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry($controller);
         $this->Acl = new AclComponent($registry, Configure::read('Acl'));
         $this->Aco = $this->Acl->Aco;
         $this->controller = $controller;
@@ -136,7 +136,7 @@ class AclExtras
      */
     public function out($msg)
     {
-        if (!empty($this->controller->Flash)) {
+        if ($this->controller->components()->has('Flash')) {
             $this->controller->Flash->success($msg);
         } else {
             $this->Shell->out($msg);
@@ -153,7 +153,7 @@ class AclExtras
      */
     public function err($msg)
     {
-        if (!empty($this->controller->Flash)) {
+        if ($this->controller->components()->has('Flash')) {
             $this->controller->Flash->error($msg);
         } else {
             $this->Shell->err($msg);
@@ -459,7 +459,7 @@ class AclExtras
     protected function _checkMethods($className, $controllerName, $node, $pluginPath = null, $prefixPath = null)
     {
         $excludes = $this->_getCallbacks($className, $pluginPath, $prefixPath);
-        $baseMethods = get_class_methods(new Controller());
+        $baseMethods = get_class_methods(new Controller(new ServerRequest()));
         $namespace = $this->_getNamespace($className, $pluginPath, $prefixPath);
         $methods = get_class_methods($namespace);
         if ($methods == null) {
